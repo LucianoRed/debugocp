@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funcionou! 🚀</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --border: #1e293b;
+      --green: #00ff88;
+      --cyan: #00d4ff;
+      --purple: #a855f7;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,136,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* glow blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: .25;
+      pointer-events: none;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--green);  top: -150px; left: -150px; animation-delay: 0s; }
+    .blob-2 { width: 400px; height: 400px; background: var(--cyan);   bottom: -120px; right: -100px; animation-delay: -4s; }
+    .blob-3 { width: 300px; height: 300px; background: var(--purple); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -8s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.08); }
+    }
+
+    /* card */
+    .card {
+      position: relative;
+      background: rgba(17, 24, 39, .85);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 52px 56px;
+      max-width: 680px;
+      width: calc(100% - 40px);
+      box-shadow: 0 0 60px rgba(0,255,136,.08), 0 32px 64px rgba(0,0,0,.6);
+      animation: fadeUp .8s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid rgba(0,255,136,.3);
+      border-radius: 999px;
+      padding: 4px 14px;
+      margin-bottom: 28px;
+      animation: fadeUp .8s .1s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .5; transform: scale(.7); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.05;
+      background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 60%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      animation: fadeUp .8s .2s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .subtitle {
+      font-size: .95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      animation: fadeUp .8s .3s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .subtitle strong { color: var(--text); }
+
+    /* tools grid */
+    .tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 36px;
+      animation: fadeUp .8s .4s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .tool {
+      font-size: .72rem;
+      letter-spacing: .06em;
+      background: rgba(0,255,136,.06);
+      border: 1px solid rgba(0,255,136,.2);
+      color: var(--green);
+      border-radius: 6px;
+      padding: 5px 12px;
+      transition: background .2s, border-color .2s;
+    }
+
+    .tool:hover {
+      background: rgba(0,255,136,.14);
+      border-color: rgba(0,255,136,.5);
+    }
+
+    /* terminal snippet */
+    .terminal {
+      background: #060a12;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      font-size: .8rem;
+      line-height: 1.8;
+      animation: fadeUp .8s .5s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .terminal .prompt { color: var(--green); }
+    .terminal .cmd    { color: var(--cyan); }
+    .terminal .out    { color: var(--muted); }
+    .terminal .ok     { color: var(--green); }
+
+    .footer {
+      margin-top: 32px;
+      font-size: .72rem;
+      color: var(--muted);
+      text-align: center;
+      animation: fadeUp .8s .6s cubic-bezier(.16,1,.3,1) both;
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="card">
+    <div class="badge">container online</div>
+
+    <h1>Funcionou! 🚀</h1>
+
+    <p class="subtitle">
+      O container de <strong>debug leve</strong> está rodando corretamente.<br>
+      Servidor web ativo, ferramentas de rede disponíveis e rodando
+      <strong>sem privilégios root</strong> — como deve ser.
+    </p>
+
+    <div class="tools">
+      <span class="tool">nmap</span>
+      <span class="tool">tcpdump</span>
+      <span class="tool">iperf3</span>
+      <span class="tool">iptraf-ng</span>
+      <span class="tool">mtr</span>
+      <span class="tool">traceroute</span>
+      <span class="tool">curl</span>
+      <span class="tool">wget</span>
+      <span class="tool">git</span>
+      <span class="tool">nginx</span>
+    </div>
+
+    <div class="terminal">
+      <div><span class="prompt">$</span> <span class="cmd">id</span></div>
+      <div class="out">uid=1001(debugger) gid=0(root) groups=0(root)</div>
+      <div><span class="prompt">$</span> <span class="cmd">curl -s localhost/</span></div>
+      <div class="ok">✓ HTTP 200 OK — debug-light está de pé</div>
+      <div><span class="prompt">$</span> <span class="cmd">nmap --version | head -1</span></div>
+      <div class="out">Nmap 7.x — ready to scan</div>
+      <div><span class="prompt">$</span> <span class="cmd">_</span></div>
+    </div>
+
+    <div class="footer">debug-light · OpenShift-compatible · non-root · UID 1001</div>
+  </div>
+</body>
+</html>

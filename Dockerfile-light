@@ -1,0 +1,68 @@
+# ============================================================
+# debug-light — lightweight network debug image + web server
+# Runs as non-root (UID 1001) — compatible with OpenShift SCC
+# ============================================================
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
+
+LABEL maintainer="platform-team" \
+      description="Lightweight debug toolbox with built-in web server" \
+      version="1.0.0"
+
+# ---------- install tools + nginx ----------
+RUN microdnf update -y && \
+    microdnf install -y \
+        nmap \
+        tcpdump \
+        iperf3 \
+        iptraf-ng \
+        mtr \
+        traceroute \
+        curl \
+        wget \
+        git \
+        nginx \
+        bind-utils \
+        net-tools \
+        iproute \
+        iputils \
+        jq \
+        bash \
+        ca-certificates && \
+    microdnf clean all && \
+    rm -rf /var/cache/dnf
+
+# ---------- allow tcpdump/nmap without root ----------
+RUN setcap cap_net_raw,cap_net_admin+eip /usr/sbin/tcpdump 2>/dev/null || true && \
+    setcap cap_net_raw+eip /usr/bin/nmap 2>/dev/null || true
+
+# ---------- nginx: adjust permissions for non-root ----------
+RUN mkdir -p /var/www/html /var/log/nginx /var/lib/nginx/tmp && \
+    # nginx on UBI9 uses /run/nginx.pid by default — redirect to /tmp via config
+    chown -R 1001:0 /var/www/html /var/log/nginx /var/lib/nginx && \
+    chmod -R g=u   /var/www/html /var/log/nginx /var/lib/nginx && \
+    # allow nginx to bind port 8080 (< 1024 needs CAP_NET_BIND_SERVICE only for <1024)
+    chmod g=u /etc/nginx /etc/nginx/nginx.conf 2>/dev/null || true
+
+# ---------- copy custom nginx config (port 8080, tmp paths) ----------
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# ---------- copy web content ----------
+COPY html/index.html /var/www/html/index.html
+
+# ---------- create non-root user ----------
+RUN useradd -u 1001 -r -g 0 -d /home/debugger -s /bin/bash \
+        -c "OpenShift Debug User" debugger && \
+    mkdir -p /home/debugger && \
+    chown -R 1001:0 /home/debugger && \
+    chmod -R g=u /home/debugger
+
+WORKDIR /home/debugger
+USER 1001
+
+EXPOSE 8080
+
+# health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl -fs http://localhost:8080/healthz || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -14,7 +14,21 @@ ARG KUBECTL_VERSION=v1.30.0
 ARG TARGETARCH=amd64
 
 # ---------- install base tools ----------
+# iptraf-ng and iperf3 live in EPEL, which is not enabled by default on UBI9.
+# We bootstrap EPEL by installing its release RPM directly (no subscription needed).
 RUN microdnf update -y && \
+    microdnf install -y \
+        curl \
+        ca-certificates \
+        tar \
+        gzip \
+        bash && \
+    # --- enable EPEL 9 ---
+    curl -fsSL https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
+         -o /tmp/epel-release.rpm && \
+    rpm -ivh /tmp/epel-release.rpm && \
+    rm -f /tmp/epel-release.rpm && \
+    # --- install everything ---
     microdnf install -y \
         nmap \
         tcpdump \
@@ -22,7 +36,6 @@ RUN microdnf update -y && \
         iptraf-ng \
         mtr \
         traceroute \
-        curl \
         wget \
         git \
         bind-utils \
@@ -30,11 +43,7 @@ RUN microdnf update -y && \
         iproute \
         iputils \
         procps-ng \
-        jq \
-        bash \
-        tar \
-        gzip \
-        ca-certificates && \
+        jq && \
     microdnf clean all && \
     rm -rf /var/cache/dnf
 

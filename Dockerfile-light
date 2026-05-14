@@ -9,7 +9,18 @@ LABEL maintainer="platform-team" \
       version="1.0.0"
 
 # ---------- install tools + nginx ----------
+# iptraf-ng and iperf3 live in EPEL — bootstrap it first.
 RUN microdnf update -y && \
+    microdnf install -y \
+        curl \
+        ca-certificates \
+        bash && \
+    # --- enable EPEL 9 ---
+    curl -fsSL https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
+         -o /tmp/epel-release.rpm && \
+    rpm -ivh /tmp/epel-release.rpm && \
+    rm -f /tmp/epel-release.rpm && \
+    # --- install everything ---
     microdnf install -y \
         nmap \
         tcpdump \
@@ -17,7 +28,6 @@ RUN microdnf update -y && \
         iptraf-ng \
         mtr \
         traceroute \
-        curl \
         wget \
         git \
         nginx \
@@ -25,9 +35,7 @@ RUN microdnf update -y && \
         net-tools \
         iproute \
         iputils \
-        jq \
-        bash \
-        ca-certificates && \
+        jq && \
     microdnf clean all && \
     rm -rf /var/cache/dnf
 

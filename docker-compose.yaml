@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+
+  # ── Imagem COMPLETA — debug + oc + kubectl ──────────────────────────
+  debug-full:
+    build:
+      context: ./debug-full
+      dockerfile: Dockerfile
+      args:
+        OC_VERSION: "4.15.0"
+        KUBECTL_VERSION: "v1.30.0"
+        TARGETARCH: "amd64"
+    image: debug-full:1.0.0
+    container_name: debug-full
+    stdin_open: true
+    tty: true
+    # OpenShift: use a SecurityContextConstraints (SCC) that allows cap_net_raw
+    # Locally: add the cap below
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+  # ── Imagem LEVE — debug + nginx ─────────────────────────────────────
+  debug-light:
+    build:
+      context: ./debug-light
+      dockerfile: Dockerfile
+    image: debug-light:1.0.0
+    container_name: debug-light
+    ports:
+      - "8080:8080"
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
